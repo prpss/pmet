@@ -1,69 +1,67 @@
 #include <stdio.h>
-#include <math.h>
 #include <time.h>
+#include <math.h>
 #include <stdlib.h>
 
-int h[50];
-void heapify(int h[], int n)
+void heapify(int arr[], int n, int i)
 {
-    int i, j, n1, k, heap, v;
-    n1 = n;
-    for (i = n1 / 2; i >= 1; i--)
+    int largest = i;
+    int l = 2 * i + 1;
+    int r = 2 * i + 2;
+
+    if (l < n && arr[l] > arr[largest])
+        largest = l;
+
+    if (r < n && arr[r] > arr[largest])
+        largest = r;
+
+    if (largest != i)
     {
-        k = i;
-        v = h[k];
-        heap = 0;
-        while (!(heap) && (2 * k) <= n1)
-        {
-            j = 2 * k;
-            if (j < n1)
-                if (h[j] < h[j + 1])
-                    j = j + 1;
-            if (v >= h[j])
-                heap = 1;
-            else
-            {
-                h[k] = h[j];
-                k = j;
-            }
-            h[k] = v;
-        }
+        int temp = arr[i];
+        arr[i] = arr[largest];
+        arr[largest] = temp;
+
+        heapify(arr, n, largest);
     }
 }
-int main()
+
+void heapSort(int arr[], int n)
 {
-    int i, n, size, t;
-    double totaltime, start, end;
-    printf("enter value of n\n");
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i);
+    for (int i = n - 1; i > 0; i--)
+    {
+        int temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+
+        heapify(arr, i, 0);
+    }
+}
+
+void main()
+{
+    int n;
+    printf("Enter the number of elements :");
     scanf("%d", &n);
-    printf("enter array elements\n");
-    for (i = 1; i <= n; i++)
-    {
-        // scanf("%d", &h[i]);
-        h[i] = rand();
-    }
-    printf("elements\n");
-    for (i = 1; i <= n; i++)
-    {
-        printf("%d\n", h[i]);
-    }
+    int arr[n];
+    clock_t start, end;
+    double totaltme;
+
+    srand(time(0));
+
+    for (int i = 0; i < n; i++)
+        arr[i] = rand();
+
     start = clock();
-    heapify(h, n);
-    printf("elemts heapified:\n");
-    for (i = 1; i <= n; i++)
-        printf("%d\n", h[i]);
-    for (i = n; i >= 1; i--)
-    {
-        t = h[1];
-        h[1] = h[i];
-        h[i] = t;
-        size = i - 1;
-        heapify(h, size);
-    }
+    heapSort(arr, n);
     end = clock();
-    printf("elemtents sorted\n");
-    for (i = 1; i <= n; i++)
-        printf("%d\n", h[i]);
-    totaltime = (double)(end - start) / CLOCKS_PER_SEC;
-    printf("time taken is %e", totaltime);
+
+    totaltme = (double)(end - start) / CLOCKS_PER_SEC;
+
+    printf("Sorted Elements.\n");
+    for (int i = 0; i < n; i++)
+        printf("%d\t", arr[i]);
+
+    printf("Total time taken to sort : %es \n", totaltme);
 }
